@@ -1,1 +1,5 @@
+apiVersion: v2
+name: medical-chatbot
+version: 0.1.0
+description: Helm chart for deploying LangChain Medical Chatbot
 
