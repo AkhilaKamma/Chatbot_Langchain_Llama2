@@ -1,1 +1,7 @@
-
+replicaCount: 2
+image:
+  repository: your-dockerhub-username/medical-chatbot
+  tag: latest
+service:
+  type: LoadBalancer
+  port: 80
