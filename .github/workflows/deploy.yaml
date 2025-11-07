@@ -1,1 +1,32 @@
+name: Build and Deploy to Cloud
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t medical-chatbot .
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Push image to DockerHub
+        run: |
+          docker tag medical-chatbot:latest ${{ secrets.DOCKERHUB_USERNAME }}/medical-chatbot:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/medical-chatbot:latest
+
+      - name: Deploy via Helm
+        run: |
+          helm upgrade --install chatbot ./helm \
+            --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/medical-chatbot \
+            --set image.tag=latest
+
+
+
 
